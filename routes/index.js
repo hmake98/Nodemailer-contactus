@@ -26,7 +26,6 @@ router.post('/submit', (req, res) => {
   readHTMLFile(path.join(__dirname, '../templates/welcome.hbs'), function (err, html) {
     // console.log(html)
     var template = Handlebars.compile(html);;
-    console.log(template({name: req.body.txtName}))
     let transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -39,17 +38,17 @@ router.post('/submit', (req, res) => {
       from: 'rcbrcb13@gmail.com',
       to: req.body.txtEmail,
       subject: "Message from" + " " + req.body.txtName,
-      html: template({})
+      html: template({name: req.body.txtName, message: req.body.txtMsg})  
     };
 
-    // transporter.sendMail(mailOptions, (err, info) => {
-    //   if (err) {
-    //     console.log(err);
-    //   } else {
-    //     req.flash('info', 'flash added! ');
-    //     res.redirect('/');
-    //   }
-    // });
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) {
+        console.log(err);
+      } else {
+        req.flash('info', 'flash added! ');
+        res.redirect('/');
+      }
+    });
   });
 });
 
